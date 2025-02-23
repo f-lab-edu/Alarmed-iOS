@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct AlarmEditView: View {
-  public init() {}
+  public init() { }
 
   public var body: some View {
     VStack(spacing: 8) {
