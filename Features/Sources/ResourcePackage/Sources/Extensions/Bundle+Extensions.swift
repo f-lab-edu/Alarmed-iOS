@@ -7,6 +7,6 @@
 
 import Foundation
 
-public extension Bundle {
-  static var whattingResources: Bundle { .module }
+extension Bundle {
+  public static var whattingResources: Bundle { .module }
 }

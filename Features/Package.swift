@@ -57,7 +57,8 @@ private var targets: [Target] {
       module: .AlarmFeature,
       dependencies: [
         .external(.ComposableArchitecture),
-      ]),
+      ],
+      addTestTarget: true),
     Target.module(
       module: .AppFeature,
       dependencies: [
