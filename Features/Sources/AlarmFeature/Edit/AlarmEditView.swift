@@ -7,21 +7,69 @@
 
 import SwiftUI
 
+import ComposableArchitecture
+
 public struct AlarmEditView: View {
-  public init() { }
+  private enum Metrics {
+    static let labelSpacingHorizontal: CGFloat = 8
+  }
+  @Bindable private var store: StoreOf<AlarmEditReducer>
+
+  public init(store: StoreOf<AlarmEditReducer>) {
+    self.store = store
+  }
 
   public var body: some View {
-    VStack(spacing: 8) {
-      Image(systemName: "alarm")
-        .imageScale(.large)
-        .foregroundStyle(.tint)
+    Form {
+      Section {
+        DatePicker(
+          "Alarm Time Picker",
+          selection: $store.alarmTime,
+          displayedComponents: .hourAndMinute
+        )
+        .datePickerStyle(.wheel)
+        .labelsHidden()
+      }
 
-      Text("Alarm Edit View")
+      Section {
+        HStack(spacing: Metrics.labelSpacingHorizontal) {
+          ForEach(store.weekdays, id: \.self) { weekday in
+            Button {
+              store.send(.weekdaySelected(weekday))
+            } label: {
+              Text(weekday.shortDescription)
+                .foregroundStyle(
+                  store.selectedWeekdays.contains(weekday) ? Color.blue : Color.gray
+                )
+            }
+            .buttonStyle(.borderless)
+          }
+        }
+
+        HStack(spacing: Metrics.labelSpacingHorizontal) {
+          Text("Memo")
+          TextField("Describe your alarm", text: $store.memo)
+        }
+      }
+
+      Button {
+        store.send(.saveButtonTapped)
+      } label: {
+        Text("Save")
+      }
     }
-    .padding()
   }
 }
 
 #Preview {
-  AlarmEditView()
+  AlarmEditView(
+    store: Store(
+      initialState: AlarmEditReducer.State(
+        alarmTime: Date(),
+        selectedWeekdays: [.monday]
+      )
+    ) {
+      AlarmEditReducer()
+    }
+  )
 }

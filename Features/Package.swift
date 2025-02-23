@@ -17,6 +17,7 @@ enum Module: String, CaseIterable {
   case AlarmFeature
   case AppFeature
   case ResourcePackage
+  case SharedModels
   case StyleGuide
 }
 
@@ -56,6 +57,7 @@ private var targets: [Target] {
     Target.module(
       module: .AlarmFeature,
       dependencies: [
+        .module(.StyleGuide),
         .external(.ComposableArchitecture),
       ],
       addTestTarget: true),
@@ -72,9 +74,12 @@ private var targets: [Target] {
       ],
       plugins: [.SwiftGen]),
     Target.module(
+      module: .SharedModels),
+    Target.module(
       module: .StyleGuide,
       dependencies: [
         .module(.ResourcePackage),
+        .module(.SharedModels),
       ]),
   ].flatMap { $0 }
 }
@@ -161,7 +166,7 @@ extension Target {
     linkerSettings: [LinkerSetting]? = nil,
     plugins: [Plugin]? = nil,
     addTestTarget: Bool = false)
-    -> [Target]
+  -> [Target]
   {
     var targets: [Target] = [
       .target(
