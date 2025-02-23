@@ -16,6 +16,8 @@ let package = Package(
 enum Module: String, CaseIterable {
   case AlarmFeature
   case AppFeature
+  case ResourcePackage
+  case StyleGuide
 }
 
 // MARK: - ExternalDependency
@@ -60,6 +62,18 @@ private var targets: [Target] {
       module: .AppFeature,
       dependencies: [
         .module(.AlarmFeature),
+      ]),
+    Target.module(
+      module: .ResourcePackage,
+      resources: [
+        .process("Resources/Colors.xcassets"),
+        .process("Resources/Images.xcassets"),
+      ],
+      plugins: [.SwiftGenPlugin]),
+    Target.module(
+      module: .StyleGuide,
+      dependencies: [
+        .module(.ResourcePackage),
       ]),
   ].flatMap { $0 }
 }
