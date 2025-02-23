@@ -8,5 +8,5 @@
 import Foundation
 
 extension Bundle {
-  public static var whattingResources: Bundle { .module }
+  public static var resourcePackage: Bundle { .module }
 }
