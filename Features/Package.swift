@@ -37,14 +37,14 @@ enum ExternalDependency: String {
 
 enum Plugin: String {
   case AirbnbSwiftFormat
-  case SwiftGenPlugin
+  case SwiftGen
 
   private var packageName: String {
     switch self {
     case .AirbnbSwiftFormat:
       "AirbnbSwift"
-    case .SwiftGenPlugin:
-      rawValue
+    case .SwiftGen:
+      "SwiftGenPlugin"
     }
   }
 }
@@ -69,7 +69,7 @@ private var targets: [Target] {
         .process("Resources/Colors.xcassets"),
         .process("Resources/Images.xcassets"),
       ],
-      plugins: [.SwiftGenPlugin]),
+      plugins: [.SwiftGen]),
     Target.module(
       module: .StyleGuide,
       dependencies: [
@@ -141,7 +141,7 @@ protocol PluginUsageProvider {
 // MARK: - Plugin + PluginUsageProvider
 
 extension Plugin: PluginUsageProvider {
-  var pluginUsage: Target.PluginUsage { .plugin(name: rawValue, package: packageName) }
+  var pluginUsage: Target.PluginUsage { .plugin(name: packageName, package: packageName) }
 }
 
 extension Target {
