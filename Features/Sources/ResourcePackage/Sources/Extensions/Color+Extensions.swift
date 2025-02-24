@@ -23,14 +23,15 @@ extension Color {
   }
 
   private init(hex: Int, includesAlpha: Bool) {
-    let red = Double((hex >> (includesAlpha ? Hex.alphaShift : Hex.redShift)) & Hex.componentMask) / Hex.colorNormalizationFactor
-    let green = Double((hex >> (includesAlpha ? Hex.redShift : Hex.greenShift)) & Hex.componentMask) / Hex
-      .colorNormalizationFactor
-    let blue = Double((hex >> (includesAlpha ? Hex.greenShift : Hex.blueShift)) & Hex.componentMask) / Hex
-      .colorNormalizationFactor
-    let opacity = includesAlpha ? Double(hex & Hex.componentMask) / Hex.colorNormalizationFactor : Hex.maxAlpha
+    func extractComponent(shift: Int) -> Double {
+      Double((hex >> shift) & Hex.componentMask) / Hex.colorNormalizationFactor
+    }
 
-    self.init(red: red, green: green, blue: blue, opacity: opacity)
+    let red = extractComponent(shift: includesAlpha ? Hex.redShiftWithAlpha : Hex.redShift)
+    let green = extractComponent(shift: includesAlpha ? Hex.greenShiftWithAlpha : Hex.greenShift)
+    let blue = extractComponent(shift: includesAlpha ? Hex.blueShiftWithAlpha : Hex.blueShift)
+    let alpha = includesAlpha ? extractComponent(shift: Hex.alphaShift) : Hex.maxAlpha
+    self.init(red: red, green: green, blue: blue, opacity: alpha)
   }
 
   // MARK: Private
@@ -42,10 +43,17 @@ extension Color {
     static let rgbaLength = 8
     static let colorPrefix = "#"
 
+    // shifts without alpha
     static let redShift = 16
     static let greenShift = 8
     static let blueShift = 0
-    static let alphaShift = 24
+
+    // shifts with alpha
+    static let redShiftWithAlpha = 24
+    static let greenShiftWithAlpha = 16
+    static let blueShiftWithAlpha = 8
+    static let alphaShift = 0
+
     static let componentMask = 0xFF
     static let colorNormalizationFactor = 255.0
     static let hexNumber = 16
