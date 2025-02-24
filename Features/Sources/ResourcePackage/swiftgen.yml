@@ -1,0 +1,12 @@
+xcassets:
+  - inputs:
+      - Resources/Colors.xcassets
+    outputs:
+      templatePath: Resources/Templates/color-code-generation.stencil
+      output: ${DERIVED_SOURCES_DIR}/Colors+Generated.swift
+
+  - inputs:
+      - Resources/Images.xcassets
+    outputs:
+      templatePath: Resources/Templates/image-code-generation.stencil
+      output: ${DERIVED_SOURCES_DIR}/Images+Generated.swift
