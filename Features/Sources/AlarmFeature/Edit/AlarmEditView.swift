@@ -10,14 +10,14 @@ import SwiftUI
 import ComposableArchitecture
 
 public struct AlarmEditView: View {
-  private enum Metrics {
-    static let labelSpacingHorizontal: CGFloat = 8
-  }
-  @Bindable private var store: StoreOf<AlarmEditReducer>
+
+  // MARK: Lifecycle
 
   public init(store: StoreOf<AlarmEditReducer>) {
     self.store = store
   }
+
+  // MARK: Public
 
   public var body: some View {
     Form {
@@ -25,10 +25,9 @@ public struct AlarmEditView: View {
         DatePicker(
           "Alarm Time Picker",
           selection: $store.alarmTime,
-          displayedComponents: .hourAndMinute
-        )
-        .datePickerStyle(.wheel)
-        .labelsHidden()
+          displayedComponents: .hourAndMinute)
+          .datePickerStyle(.wheel)
+          .labelsHidden()
       }
 
       Section {
@@ -39,8 +38,7 @@ public struct AlarmEditView: View {
             } label: {
               Text(weekday.shortDescription)
                 .foregroundStyle(
-                  store.selectedWeekdays.contains(weekday) ? Color.blue : Color.gray
-                )
+                  store.selectedWeekdays.contains(weekday) ? Color.blue : Color.gray)
             }
             .buttonStyle(.borderless)
           }
@@ -59,6 +57,15 @@ public struct AlarmEditView: View {
       }
     }
   }
+
+  // MARK: Private
+
+  private enum Metrics {
+    static let labelSpacingHorizontal: CGFloat = 8
+  }
+
+  @Bindable private var store: StoreOf<AlarmEditReducer>
+
 }
 
 #Preview {
@@ -66,10 +73,8 @@ public struct AlarmEditView: View {
     store: Store(
       initialState: AlarmEditReducer.State(
         alarmTime: Date(),
-        selectedWeekdays: [.monday]
-      )
-    ) {
+        selectedWeekdays: [.monday]))
+    {
       AlarmEditReducer()
-    }
-  )
+    })
 }

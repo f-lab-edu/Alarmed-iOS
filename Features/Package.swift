@@ -166,7 +166,7 @@ extension Target {
     linkerSettings: [LinkerSetting]? = nil,
     plugins: [Plugin]? = nil,
     addTestTarget: Bool = false)
-  -> [Target]
+    -> [Target]
   {
     var targets: [Target] = [
       .target(

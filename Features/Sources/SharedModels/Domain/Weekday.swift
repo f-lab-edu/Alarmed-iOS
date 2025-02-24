@@ -7,6 +7,8 @@
 
 import Foundation
 
+// MARK: - Weekday
+
 public enum Weekday: Int, CaseIterable {
   case sunday = 1
   case monday
@@ -17,28 +19,30 @@ public enum Weekday: Int, CaseIterable {
   case saturday
 }
 
+// MARK: CustomStringConvertible
+
 extension Weekday: CustomStringConvertible {
   public var description: String {
     switch self {
-    case .sunday:     return "Sunday"
-    case .monday:     return "Monday"
-    case .tuesday:    return "Tuesday"
-    case .wednesday:  return "Wednesday"
-    case .thursday:   return "Thursday"
-    case .friday:     return "Friday"
-    case .saturday:   return "Saturday"
+    case .sunday: "Sunday"
+    case .monday: "Monday"
+    case .tuesday: "Tuesday"
+    case .wednesday: "Wednesday"
+    case .thursday: "Thursday"
+    case .friday: "Friday"
+    case .saturday: "Saturday"
     }
   }
 
   public var shortDescription: String {
     switch self {
-    case .sunday:     return "Sun"
-    case .monday:     return "Mon"
-    case .tuesday:    return "Tue"
-    case .wednesday:  return "Wed"
-    case .thursday:   return "Thu"
-    case .friday:     return "Fri"
-    case .saturday:   return "Sat"
+    case .sunday: "Sun"
+    case .monday: "Mon"
+    case .tuesday: "Tue"
+    case .wednesday: "Wed"
+    case .thursday: "Thu"
+    case .friday: "Fri"
+    case .saturday: "Sat"
     }
   }
 }

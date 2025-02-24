@@ -13,6 +13,13 @@ import ComposableArchitecture
 
 @Reducer
 public struct AlarmEditReducer {
+
+  // MARK: Lifecycle
+
+  public init() { }
+
+  // MARK: Public
+
   @ObservableState
   public struct State: Equatable {
     public var alarmTime: Date
@@ -24,8 +31,8 @@ public struct AlarmEditReducer {
       alarmTime: Date,
       memo: String = "",
       selectedWeekdays: Set<Weekday>,
-      weekdays: [Weekday] = Weekday.allCases
-    ) {
+      weekdays: [Weekday] = Weekday.allCases)
+    {
       self.alarmTime = alarmTime
       self.memo = memo
       self.selectedWeekdays = selectedWeekdays
@@ -38,8 +45,6 @@ public struct AlarmEditReducer {
     case saveButtonTapped
     case weekdaySelected(Weekday)
   }
-
-  public init() { }
 
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
