@@ -8,53 +8,60 @@
 import SwiftUI
 
 extension Color {
-  public init(hex: Int, alpha: Double = 1.0) {
-    let red = Double((hex >> 16) & 0xFF) / 255.0
-    let green = Double((hex >> 8) & 0xFF) / 255.0
-    let blue = Double(hex & 0xFF) / 255.0
-    self.init(red: red, green: green, blue: blue, opacity: alpha)
-  }
 
-  public init(hex: String, alpha: Double = 1.0) {
-    var sanitizedHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+  // MARK: Lifecycle
 
-    if sanitizedHex.hasPrefix("#") {
-      sanitizedHex.removeFirst()
-    }
-
+  public init(hexString: String) {
     guard
-      sanitizedHex.count == 6,
-      let hexValue = Int(sanitizedHex, radix: 16)
+      let (hexValue, hasAlpha) = Self.parseHex(from: hexString)
     else {
       self = .black
       return
     }
 
-    self.init(hex: hexValue, alpha: alpha)
+    self.init(hex: hexValue, includesAlpha: hasAlpha)
   }
 
-  public init(hexString: String) {
+  private init(hex: Int, includesAlpha: Bool) {
+    let red = Double((hex >> (includesAlpha ? Hex.alphaShift : Hex.redShift)) & Hex.componentMask) / Hex.divisor
+    let green = Double((hex >> (includesAlpha ? Hex.redShift : Hex.greenShift)) & Hex.componentMask) / Hex.divisor
+    let blue = Double((hex >> (includesAlpha ? Hex.greenShift : Hex.blueShift)) & Hex.componentMask) / Hex.divisor
+    let opacity = includesAlpha ? Double(hex & Hex.componentMask) / Hex.divisor : 1.0
+
+    self.init(red: red, green: green, blue: blue, opacity: opacity)
+  }
+
+  // MARK: Private
+
+  private enum Hex {
+    /// #RRGGBB
+    static let rgbLength = 6
+    /// #RRGGBBAA
+    static let rgbaLength = 8
+    static let componentMask = 0xFF
+    static let divisor = 255.0
+    static let redShift = 16
+    static let greenShift = 8
+    static let blueShift = 0
+    static let alphaShift = 24
+  }
+
+  private static func parseHex(from hexString: String) -> (hex: Int, hasAlpha: Bool)? {
     var sanitizedHex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
 
     if sanitizedHex.hasPrefix("#") {
       sanitizedHex.removeFirst()
     }
 
+    let hasAlpha = sanitizedHex.count == Hex.rgbaLength
+
     guard
-      sanitizedHex.count == 6 || sanitizedHex.count == 8,
+      sanitizedHex.count == Hex.rgbLength || hasAlpha,
       let hexValue = Int(sanitizedHex, radix: 16)
     else {
-      self = .black
-      return
+      return nil
     }
 
-    let hasAlpha = sanitizedHex.count == 8
-
-    let red = Double((hexValue >> (hasAlpha ? 24 : 16)) & 0xFF) / 255.0
-    let green = Double((hexValue >> (hasAlpha ? 16 : 8)) & 0xFF) / 255.0
-    let blue = Double((hexValue >> (hasAlpha ? 8 : 0)) & 0xFF) / 255.0
-    let alpha = hasAlpha ? Double(hexValue & 0xFF) / 255.0 : 1.0
-
-    self.init(red: red, green: green, blue: blue, opacity: alpha)
+    return (hexValue, hasAlpha)
   }
 }
