@@ -23,10 +23,12 @@ extension Color {
   }
 
   private init(hex: Int, includesAlpha: Bool) {
-    let red = Double((hex >> (includesAlpha ? Hex.alphaShift : Hex.redShift)) & Hex.componentMask) / Hex.divisor
-    let green = Double((hex >> (includesAlpha ? Hex.redShift : Hex.greenShift)) & Hex.componentMask) / Hex.divisor
-    let blue = Double((hex >> (includesAlpha ? Hex.greenShift : Hex.blueShift)) & Hex.componentMask) / Hex.divisor
-    let opacity = includesAlpha ? Double(hex & Hex.componentMask) / Hex.divisor : 1.0
+    let red = Double((hex >> (includesAlpha ? Hex.alphaShift : Hex.redShift)) & Hex.componentMask) / Hex.colorNormalizationFactor
+    let green = Double((hex >> (includesAlpha ? Hex.redShift : Hex.greenShift)) & Hex.componentMask) / Hex
+      .colorNormalizationFactor
+    let blue = Double((hex >> (includesAlpha ? Hex.greenShift : Hex.blueShift)) & Hex.componentMask) / Hex
+      .colorNormalizationFactor
+    let opacity = includesAlpha ? Double(hex & Hex.componentMask) / Hex.colorNormalizationFactor : Hex.maxAlpha
 
     self.init(red: red, green: green, blue: blue, opacity: opacity)
   }
@@ -38,18 +40,22 @@ extension Color {
     static let rgbLength = 6
     /// #RRGGBBAA
     static let rgbaLength = 8
-    static let componentMask = 0xFF
-    static let divisor = 255.0
+    static let colorPrefix = "#"
+
     static let redShift = 16
     static let greenShift = 8
     static let blueShift = 0
     static let alphaShift = 24
+    static let componentMask = 0xFF
+    static let colorNormalizationFactor = 255.0
+    static let hexNumber = 16
+    static let maxAlpha = 1.0
   }
 
   private static func parseHex(from hexString: String) -> (hex: Int, hasAlpha: Bool)? {
     var sanitizedHex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    if sanitizedHex.hasPrefix("#") {
+    if sanitizedHex.hasPrefix(Hex.colorPrefix) {
       sanitizedHex.removeFirst()
     }
 
@@ -57,7 +63,7 @@ extension Color {
 
     guard
       sanitizedHex.count == Hex.rgbLength || hasAlpha,
-      let hexValue = Int(sanitizedHex, radix: 16)
+      let hexValue = Int(sanitizedHex, radix: Hex.hexNumber)
     else {
       return nil
     }
