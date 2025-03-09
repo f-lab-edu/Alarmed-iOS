@@ -1,0 +1,17 @@
+import SwiftUI
+
+extension Image {
+{% for catalog in catalogs %}
+{% for asset in catalog.assets %}
+{% if asset.type == "image" %}
+  public static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = Image("{{asset.name}}", bundle: .module)
+{% elif asset.items %}
+  public enum {{asset.name|swiftIdentifier:"pretty"}} {
+    {% for subAsset in asset.items %}
+    public static let {{subAsset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = Image("{{asset.name}}/{{subAsset.name}}", bundle: .module)
+    {% endfor %}
+  }
+{% endif %}
+{% endfor %}
+{% endfor %}
+}
