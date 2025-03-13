@@ -14,6 +14,7 @@ extension Color {
   public init(hexString: String) {
     guard
       let (hexValue, hasAlpha) = Self.parseHex(from: hexString)
+
     else {
       self = .black
       return
