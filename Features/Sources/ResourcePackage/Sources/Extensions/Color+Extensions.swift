@@ -8,53 +8,75 @@
 import SwiftUI
 
 extension Color {
-  public init(hex: Int, alpha: Double = 1.0) {
-    let red = Double((hex >> 16) & 0xFF) / 255.0
-    let green = Double((hex >> 8) & 0xFF) / 255.0
-    let blue = Double(hex & 0xFF) / 255.0
-    self.init(red: red, green: green, blue: blue, opacity: alpha)
-  }
 
-  public init(hex: String, alpha: Double = 1.0) {
-    var sanitizedHex = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    if sanitizedHex.hasPrefix("#") {
-      sanitizedHex.removeFirst()
-    }
-
-    guard
-      sanitizedHex.count == 6,
-      let hexValue = Int(sanitizedHex, radix: 16)
-    else {
-      self = .black
-      return
-    }
-
-    self.init(hex: hexValue, alpha: alpha)
-  }
+  // MARK: Lifecycle
 
   public init(hexString: String) {
-    var sanitizedHex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    if sanitizedHex.hasPrefix("#") {
-      sanitizedHex.removeFirst()
-    }
-
     guard
-      sanitizedHex.count == 6 || sanitizedHex.count == 8,
-      let hexValue = Int(sanitizedHex, radix: 16)
+      let (hexValue, hasAlpha) = Self.parseHex(from: hexString)
+
     else {
       self = .black
       return
     }
 
-    let hasAlpha = sanitizedHex.count == 8
+    self.init(hex: hexValue, includesAlpha: hasAlpha)
+  }
 
-    let red = Double((hexValue >> (hasAlpha ? 24 : 16)) & 0xFF) / 255.0
-    let green = Double((hexValue >> (hasAlpha ? 16 : 8)) & 0xFF) / 255.0
-    let blue = Double((hexValue >> (hasAlpha ? 8 : 0)) & 0xFF) / 255.0
-    let alpha = hasAlpha ? Double(hexValue & 0xFF) / 255.0 : 1.0
+  private init(hex: Int, includesAlpha: Bool) {
+    func extractComponent(shift: Int) -> Double {
+      Double((hex >> shift) & Hex.componentMask) / Hex.colorNormalizationFactor
+    }
 
+    let red = extractComponent(shift: includesAlpha ? Hex.redShiftWithAlpha : Hex.redShift)
+    let green = extractComponent(shift: includesAlpha ? Hex.greenShiftWithAlpha : Hex.greenShift)
+    let blue = extractComponent(shift: includesAlpha ? Hex.blueShiftWithAlpha : Hex.blueShift)
+    let alpha = includesAlpha ? extractComponent(shift: Hex.alphaShift) : Hex.maxAlpha
     self.init(red: red, green: green, blue: blue, opacity: alpha)
+  }
+
+  // MARK: Private
+
+  private enum Hex {
+    /// #RRGGBB
+    static let rgbLength = 6
+    /// #RRGGBBAA
+    static let rgbaLength = 8
+    static let colorPrefix = "#"
+
+    // shifts without alpha
+    static let redShift = 16
+    static let greenShift = 8
+    static let blueShift = 0
+
+    // shifts with alpha
+    static let redShiftWithAlpha = 24
+    static let greenShiftWithAlpha = 16
+    static let blueShiftWithAlpha = 8
+    static let alphaShift = 0
+
+    static let componentMask = 0xFF
+    static let colorNormalizationFactor = 255.0
+    static let hexNumber = 16
+    static let maxAlpha = 1.0
+  }
+
+  private static func parseHex(from hexString: String) -> (hex: Int, hasAlpha: Bool)? {
+    var sanitizedHex = hexString.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if sanitizedHex.hasPrefix(Hex.colorPrefix) {
+      sanitizedHex.removeFirst()
+    }
+
+    let hasAlpha = sanitizedHex.count == Hex.rgbaLength
+
+    guard
+      sanitizedHex.count == Hex.rgbLength || hasAlpha,
+      let hexValue = Int(sanitizedHex, radix: Hex.hexNumber)
+    else {
+      return nil
+    }
+
+    return (hexValue, hasAlpha)
   }
 }
