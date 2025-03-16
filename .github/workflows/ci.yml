@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: macos-latest
+    env:
+      WORKSPACE: "App/Alarmed.xcworkspace"
+      SCHEME: "Alarmed"
+      DESTINATION: "platform=iOS Simulator,name=iPhone 16,OS=latest"
+      COMMON_FLAGS: "-skipPackagePluginValidation -skipMacroValidation"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          xcodebuild clean build-for-testing \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            $COMMON_FLAGS | xcpretty
+
+      - name: Test
+        run: |
+          xcodebuild test-without-building \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -destination "$DESTINATION" \
+            $COMMON_FLAGS | xcpretty

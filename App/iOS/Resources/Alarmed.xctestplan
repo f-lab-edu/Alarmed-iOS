@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "8F676EC9-C599-41B5-9898-7750007A8D63",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/Features",
+        "identifier" : "AppFeatureTests",
+        "name" : "AppFeatureTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Features",
+        "identifier" : "AlarmFeatureTests",
+        "name" : "AlarmFeatureTests"
+      }
+    }
+  ],
+  "version" : 1
+}

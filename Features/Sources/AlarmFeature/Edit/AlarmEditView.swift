@@ -26,7 +26,9 @@ public struct AlarmEditView: View {
           "Alarm Time Picker",
           selection: $store.alarmTime,
           displayedComponents: .hourAndMinute)
-          .datePickerStyle(.wheel)
+          #if os(iOS)
+            .datePickerStyle(.wheel)
+          #endif
           .labelsHidden()
       }
 
