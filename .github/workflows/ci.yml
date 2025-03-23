@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         run: |
-          xcodebuild clean build-for-testing \
+          xcodebuild build-for-testing \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
             -destination "$DESTINATION" \
