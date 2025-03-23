@@ -15,11 +15,11 @@ public struct AppView: View {
   public init() { }
 
   public var body: some View {
-    AlarmEditView(
-      store: Store(
-        initialState: AlarmEditReducer.State(alarmTime: Date(), selectedWeekdays: [.monday]))
-      {
-        AlarmEditReducer()
-      })
+    NavigationStack {
+      AlarmEditView(
+        store: Store(initialState: AlarmEditReducer.State(alarm: .default())) {
+          AlarmEditReducer()
+        })
+    }
   }
 }

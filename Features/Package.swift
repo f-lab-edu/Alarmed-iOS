@@ -74,7 +74,10 @@ private var targets: [Target] {
       ],
       plugins: [.SwiftGen]),
     Target.module(
-      module: .SharedModels),
+      module: .SharedModels,
+      dependencies: [
+        .external(.ComposableArchitecture),
+      ]),
     Target.module(
       module: .StyleGuide,
       dependencies: [
