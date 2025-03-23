@@ -65,7 +65,8 @@ private var targets: [Target] {
       module: .AppFeature,
       dependencies: [
         .module(.AlarmFeature),
-      ]),
+      ],
+      addTestTarget: true),
     Target.module(
       module: .ResourcePackage,
       resources: [
